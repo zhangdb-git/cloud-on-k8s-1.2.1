@@ -15,7 +15,7 @@ COPY pkg/    pkg/
 COPY cmd/    cmd/
 
 # Build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm64 \
 		go build \
             -mod readonly \
 			-ldflags "$GO_LDFLAGS" -tags="$GO_TAGS" -a \
