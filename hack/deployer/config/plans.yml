@@ -1,0 +1,118 @@
+plans:
+- id: gke-ci
+  operation: create
+  clusterName: ci
+  provider: gke
+  kubernetesVersion: 1.14
+  machineType: n1-standard-8
+  serviceAccount: true
+  psp: true
+  gke:
+    region: europe-west2
+    adminUsername: admin
+    localSsdCount: 1
+    nodeCountPerZone: 1
+    # use kustomize in GKE to remove the NVMe provisioning already taken care of by the platform
+    diskSetup: kubectl apply -k hack/deployer/config/local-disks
+    gcpScopes: https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append
+- id: gke-dev
+  operation: create
+  clusterName: dev
+  provider: gke
+  kubernetesVersion: 1.14
+  machineType: n1-standard-8
+  serviceAccount: false
+  psp: false
+  gke:
+    region: europe-west1
+    adminUsername: admin
+    localSsdCount: 1
+    nodeCountPerZone: 1
+    # gke creates a secondary IP range for all Pods of a cluster
+    # gke defaults to a /14 subnet, which allows 262k Pods per cluster, but only 62 subnets to be created
+    # /20 allows 4094 subnets, with up to 4094 IPs (Pods) per subnet
+    # more clusters can therefore be created in the same VPC network.
+    # we set a default of /20 that can be overriden here
+    # clusterIpv4Cidr: /20
+    # servicesIpv4Cidr: /20
+    gcpScopes: https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append
+- id: aks-ci
+  operation: create
+  clusterName: ci
+  provider: aks
+  kubernetesVersion: 1.16.10
+  machineType: Standard_D8s_v3
+  serviceAccount: true
+  psp: false
+  aks:
+    nodeCount: 3
+    location: westeurope
+- id: aks-dev
+  operation: create
+  clusterName: dev
+  provider: aks
+  kubernetesVersion: 1.16.10
+  machineType: Standard_D8s_v3
+  serviceAccount: false
+  psp: false
+  aks:
+    nodeCount: 3
+    location: northeurope
+- id: ocp-ci
+  operation: create
+  clusterName: ci
+  provider: ocp
+  machineType: n1-standard-8
+  serviceAccount: true
+  ocp:
+    region: europe-west2
+    nodeCount: 3
+    overwriteDefaultKubeconfig: true
+- id: ocp-dev
+  operation: create
+  clusterName: dev
+  provider: ocp
+  machineType: n1-standard-8
+  serviceAccount: true
+  ocp:
+    region: europe-west1
+    nodeCount: 3
+    overwriteDefaultKubeconfig: true
+    useNonDefaultCloudSdkPath: true
+- id: eks-ci
+  operation: create
+  clusterName: ci
+  provider: eks
+  machineType: c5d.2xlarge
+  serviceAccount: false
+  kubernetesVersion: 1.14
+  eks:
+    region: eu-central-1
+    nodeCount: 3
+    nodeAMI: static
+    diskSetup: kubectl apply -f hack/deployer/config/local-disks/ssd-provisioner.yaml
+- id: eks-dev
+  operation: create
+  clusterName: dev
+  provider: eks
+  machineType: c5d.2xlarge
+  serviceAccount: false
+  kubernetesVersion: 1.14
+  eks:
+    region: eu-west-2
+    nodeCount: 3
+    nodeAMI: static
+- id: e2e-monitor
+  operation: create
+  clusterName: e2e-monitor
+  provider: gke
+  kubernetesVersion: 1.15
+  machineType: n1-standard-8
+  serviceAccount: false
+  psp: false
+  gke:
+    region: europe-west2
+    adminUsername: admin
+    localSsdCount: 1
+    nodeCountPerZone: 1
+    gcpScopes: https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append
