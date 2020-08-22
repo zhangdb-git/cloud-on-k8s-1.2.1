@@ -1,0 +1,12 @@
+dist: bionic
+
+services:
+  - docker
+
+script:
+  - docker login -u zhangdber -p 123456aaa docker.io
+  - docker build -t zhangdber/eck-operator:1.2.1-arm64 .
+  - docker push zhangdber/eck-operator:1.2.1-arm64
+    
+arch:
+  - arm64
