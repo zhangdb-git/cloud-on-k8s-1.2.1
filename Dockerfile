@@ -22,8 +22,8 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=mips64le \
 			-o elastic-operator github.com/elastic/cloud-on-k8s/cmd
 
 # Copy the operator binary into a lighter image
-#FROM gcr.io/distroless/static:nonroot
-from golang:1.14.4
-COPY --from=builder /go/src/github.com/elastic/cloud-on-k8s/elastic-operator .
-ENTRYPOINT ["./elastic-operator"]
+FROM gcr.io/distroless/static:nonroot
+#from golang:1.14.4
+COPY --from=builder /go/src/github.com/elastic/cloud-on-k8s/elastic-operator /
+ENTRYPOINT ["/elastic-operator"]
 CMD ["manager"]
