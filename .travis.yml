@@ -5,6 +5,9 @@ services:
 
 script:
   - docker login -u zhangdber -p 123456aaa docker.io
-  - docker build -t zhangdber/eck-operator:1.2.1-mips-bin .
-  - docker push zhangdber/eck-operator:1.2.1-mips-bin
+  - docker build -t zhangdber/eck-operator:1.2.1-arm-tmp  -f Dockerfile-tmp .
+  - docker push zhangdber/eck-operator:1.2.1-arm-tmp
     
+    
+arch:
+  - arm64
